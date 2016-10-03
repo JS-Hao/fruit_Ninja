@@ -31,8 +31,9 @@ window.onload = function() {
 		});
 		if (result && bgImg.isReady) {
 			isDownloadState = true;
+			return result
 		}
-		return result;
+		return false;
 	}
 
 	//背景
