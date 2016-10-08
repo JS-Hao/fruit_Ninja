@@ -48,6 +48,7 @@ window.onload = function() {
 			&& banana_1.isReady && banana_2.isReady
 			&& peach_1.isReady && peach_2.isReady
 			&& sandia_1.isReady && sandia_2.isReady) {
+			document.querySelector('.start').play();
 			isDownloadState = true;
 			return result
 		}
@@ -494,7 +495,6 @@ window.onload = function() {
 			}
 		}, t);
 	}
-	document.querySelector('.start').play();
 	main();
 }
 
