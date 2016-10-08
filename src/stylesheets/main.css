@@ -6,4 +6,9 @@ html, body {
 	display: block;
 	background: #000;
 	margin: 0 auto;
+	background-color: rgba(255, 255, 255, 0);
+	/*filter:alpha(opacity=50);  
+    -moz-opacity:0.5;  
+    -khtml-opacity: 0.5;  
+    opacity: 0.5;  */
 }

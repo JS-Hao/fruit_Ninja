@@ -8,11 +8,19 @@ window.onload = function() {
 		canvas.width = 640;
 		canvas.height = 480;
 	}
-	
-
 	var width = canvas.width;
 	var height = canvas.height;
 
+	//背景处理
+	var background = document.querySelector('#background');
+	background.width = width;
+	background.height = height;
+	background.style.position = 'absolute';
+	background.style.left = '50%';
+	background.style.top = '0';
+	background.style.marginLeft = -width / 2 + 'px';
+	background.style.zIndex = -1;
+	
 	//音频控制
 	var music = {
 		splatter: document.querySelector('.splatter'),
@@ -397,8 +405,8 @@ window.onload = function() {
 	//动作渲染
 	function render() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		//绘制背景
-		ctx.drawImage(bgImg, 0, 0, height * bgImg.width / 480, height * bgImg.height / 480);
+		/*//绘制背景
+		ctx.drawImage(bgImg, 0, 0, height * bgImg.width / 480, height * bgImg.height / 480);*/
 		//判断生命是否为0，0则游戏结束，否则游戏继续
 		if (heart === 0) {
 			//游戏结束
