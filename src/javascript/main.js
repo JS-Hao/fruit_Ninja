@@ -1,12 +1,12 @@
 window.onload = function() {
 	var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
-	if (window.innerHeight > 640) {
-		canvas.width = 320;
-		canvas.height = 240;
-	} else {
+	if (window.innerHeight < 480) {
 		canvas.width = window.innerHeight * 320 / 240;
 		canvas.height = window.innerHeight;
+	} else {
+		canvas.width = 640;
+		canvas.height = 480;
 	}
 	
 
@@ -44,15 +44,10 @@ window.onload = function() {
 		if (result && bgImg.isReady && scoreIcog.isReady
 			&& heart1.isReady && heart2.isReady && heart3.isReady 
 			&& heart1f.isReady && heart2f.isReady && heart3f.isReady 
-			&& flash.isReady) {
-			//设置图像尺寸
-			/*var newArr = [];
-			newArr.push.apply(newArr, arr);
-			newArr.push(bgImg, scoreIcog, heart1, heart2, heart3, heart1f, heart2f, heart3f, flash);
-			newArr.forEach(function(e) {
-				e.style.width = height * e.width / 480 + 'px';
-				e.style.height = height * e.height / 480 + 'px';
-			});*/
+			&& flash.isReady && apple_1.isReady && apple_2.isReady
+			&& banana_1.isReady && banana_2.isReady
+			&& peach_1.isReady && peach_2.isReady
+			&& sandia_1.isReady && sandia_2.isReady) {
 			isDownloadState = true;
 			return result
 		}
@@ -68,6 +63,17 @@ window.onload = function() {
 	var peach = creatImg('src/images/fruit/peach.png');
 	var sandia = creatImg('src/images/fruit/sandia.png');
 	var boomImg = creatImg('src/images/fruit/boom.png');
+	//被击中的水果图片
+	var apple_1 = creatImg('src/images/fruit/apple-1.png');
+	var banana_1 = creatImg('src/images/fruit/banana-1.png');
+	var basaha_1 = creatImg('src/images/fruit/basaha-1.png');
+	var peach_1 = creatImg('src/images/fruit/peach-1.png');
+	var sandia_1 = creatImg('src/images/fruit/sandia-1.png');
+	var apple_2 = creatImg('src/images/fruit/apple-2.png');
+	var banana_2 = creatImg('src/images/fruit/banana-2.png');
+	var basaha_2 = creatImg('src/images/fruit/basaha-2.png');
+	var peach_2 = creatImg('src/images/fruit/peach-2.png');
+	var sandia_2 = creatImg('src/images/fruit/sandia-2.png');
 	//分数图标
 	var scoreIcog = creatImg('src/images/score.png');
 	//生命值
@@ -113,12 +119,15 @@ window.onload = function() {
 
     //定义水果的颜色
     var fruitStyle = [apple, banana, basaha, peach, sandia];
-
+    var fruitStyle1 = [apple_1, banana_1, basaha_1, peach_1, sandia_1];
+    var fruitStyle2 = [apple_2, banana_2, basaha_2, peach_2, sandia_2];
     //鼠标忍者刀
     function NinjaKnife() {
     	this.x = 0;
     	this.y = 0;
     	this.isDown = false;
+    	this.r = 0;
+    	this.isCutState = false;
     }
 
     function hitRender(x, y) {
@@ -131,10 +140,13 @@ window.onload = function() {
 		var length = fruit.length;
 		for (var i = 0; i < length; i++) {
 			var target = fruit[i];
-			var r = Math.min(target.fruitStyle.width, target.fruitStyle.height)
+			if (!that.isCutState) {
+				that.r = Math.min(target.fruitStyle.width, target.fruitStyle.height);
+				that.isCutState = true;
+			}
 			//Math.abs(that.x - target.x) < target.fruitStyle.width && Math.abs(that.y - target.y) < target.fruitStyle.height
 			//Math.sqrt(Math.pow((that.x - target.x), 2) + Math.pow((that.y - target.y), 2)) < target.r
-			if (Math.sqrt(Math.pow((that.x - target.x), 2) + Math.pow((that.y - target.y), 2)) < r) {
+			if (Math.sqrt(Math.pow((that.x - target.x), 2) + Math.pow((that.y - target.y), 2)) < that.r && !target.isHit) {
 				if (target.keepCutTime > 8) {
 					//切到炸弹
 					if (target.bomb) {
@@ -151,6 +163,7 @@ window.onload = function() {
 						ctx.textBaseline = 'middle';
 						ctx.fillText('Game Over', width / 2, height / 2);
 						ctx.fillText('总分: ' + score, width / 2, height / 2 -30);
+						that.isCutState = false;
 					} else {
 						//播放音频
 						music.splatter.currentTime = 0;
@@ -158,7 +171,8 @@ window.onload = function() {
 						//击中后的设置
 						hitState.state = true;
 						//初始化设置
-						target.delay = random(100, 200);
+						target.isHit = true;
+						/*target.delay = random(100, 200);
 						target.x = random(0, width);
 						target.y = height;
 						target.speedY = random.apply(null, speedY);
@@ -169,14 +183,20 @@ window.onload = function() {
 						target.isBegin = false;
 						target.keepCutTime = 0;
 						target.isLoseHeart = false;
+						target.rotate = 0;*/
+						r = Math.min(target.fruitStyle.width, target.fruitStyle.height);
 						//获取分数
 						score++;
+						that.isCutState = false;
 					}	
 				} else {
 					target.keepCutTime++;
+					that.r = that.r - 3;
 				}
 				
-			} 
+			} else {
+				that.isCutState = false;
+			}
 		}
     }
 
@@ -235,7 +255,10 @@ window.onload = function() {
 		this.speedX = random.apply(null, speedX);
 		this.speedY = random.apply(null, speedY);
 		//水果种类
-		this.fruitStyle = fruitStyle[Math.floor(Math.random() * fruitStyle.length)],
+		this.fruitLength = Math.floor(Math.random() * fruitStyle.length);
+		this.fruitStyle = fruitStyle[this.fruitLength];
+		this.fruitStyle1 = fruitStyle1[this.fruitLength];
+		this.fruitStyle2 = fruitStyle2[this.fruitLength];
 		//是否开始运动
 		this.isBegin = false;
 		//延迟
@@ -244,6 +267,10 @@ window.onload = function() {
 		this.initDelay = initDelay;
 		//保持x方向
 		this.keepX = false;
+		//是否被击中
+		this.isHit = false;
+		//旋转角度
+		this.rotate = 0;
 		//被切持续时间
 		this.keepCutTime = 0;
 		//是否失去一条生命
@@ -265,7 +292,7 @@ window.onload = function() {
 		ctx.beginPath();
 		if (this.isBegin) {
 			if (this.y > height) {
-				if (!this.isLoseHeart) {
+				if (!this.isLoseHeart && !this.isHit) {
 					// 失去一条生命值
 					heart--;
 					this.isLoseHeart = true;
@@ -281,7 +308,10 @@ window.onload = function() {
 						this.isLoseHeart = true;
 					} else {
 						this.delay = random(100, 200);
-						this.fruitStyle = fruitStyle[Math.floor(Math.random() * fruitStyle.length)];
+						this.fruitLength = Math.floor(Math.random() * fruitStyle.length);
+						this.fruitStyle = fruitStyle[this.fruitLength];
+						this.fruitStyle1 = fruitStyle1[this.fruitLength];
+						this.fruitStyle2 = fruitStyle2[this.fruitLength];
 						this.isLoseHeart = false;
 					}	
 					this.x = random(0, width);
@@ -291,30 +321,58 @@ window.onload = function() {
 					this.keepX = false;
 					this.keepCutTime = 0;
 					this.isPlayMusic = false;
+					this.rotate = 0;
+					this.isHit = false;
 				}
-
 			} else {
-				if (!this.isPlayMusic) {
-					//播放音频
-					music.throw.currentTime = 0;
-					music.throw.play();
-					this.isPlayMusic = true;
+				//未被击中
+				if (!this.isHit) {
+					if (!this.isPlayMusic) {
+						//播放音频
+						music.throw.currentTime = 0;
+						music.throw.play();
+						this.isPlayMusic = true;
+					}
+					//y方向仿抛物线运动
+					this.speedY = this.speedY + (g * t / 1000);
+					this.y = this.y - (this.speedY * t / 1000);
+					//x方向匀速运动
+					if (!this.keepX) {
+						this.speedX = (this.x - height / 2) < 0 ? this.speedX : -this.speedX;
+						this.keepX = true;
+					}
+					this.x += this.speedX * t / 1000;
+					ctx.save();//保存状态
+					ctx.translate((this.x - (height * this.fruitStyle.width / 480) / 2),
+						(this.y - (height * this.fruitStyle.height / 480) / 2));//设置画布上的(0,0)位置，也就是旋转的中心点
+					ctx.rotate((this.rotate + 0.5) * Math.PI / 180);
+					//绘制图像
+	        		ctx.drawImage(this.fruitStyle, 
+	        			(0 - (height * this.fruitStyle.width / 480) / 2), 
+	        			(0 - (height * this.fruitStyle.height / 480) / 2), 
+	        			height * this.fruitStyle.width / 480, 
+	        			height * this.fruitStyle.height / 480);
+	        		ctx.restore();//恢复状态
+	        		this.rotate += 0.5;
+				} 	
+				//被击中
+				else {
+					/*alert(this.fruitStyle.name);*/
+					this.speedY = this.speedY + (g * t / 1000);
+					this.speedX = height * 10 / 480;
+					this.y = this.y - (this.speedY * t / 1000);
+					this.x += this.speedX * t / 1000;
+					ctx.drawImage(this.fruitStyle1, 
+	        			(this.x - (height * this.fruitStyle1.width / 480) / 2 - 50), 
+	        			(this.y - (height * this.fruitStyle1.height / 480) / 2), 
+	        			height * this.fruitStyle1.width / 480, 
+	        			height * this.fruitStyle1.height / 480);
+					ctx.drawImage(this.fruitStyle2, 
+	        			(this.x - (height * this.fruitStyle2.width / 480) / 2 + 50), 
+	        			(this.y - (height * this.fruitStyle2.height / 480) / 2), 
+	        			height * this.fruitStyle2.width / 480, 
+	        			height * this.fruitStyle2.height / 480);
 				}
-				//y方向仿抛物线运动
-				this.speedY = this.speedY + (g * t / 1000);
-				this.y = this.y - (this.speedY * t / 1000);
-				//x方向匀速运动
-				if (!this.keepX) {
-					this.speedX = (this.x - height / 2) < 0 ? this.speedX : -this.speedX;
-					this.keepX = true;
-				}
-				this.x += this.speedX * t / 1000;
-				//绘制图像
-        		ctx.drawImage(this.fruitStyle, 
-        			(this.x - (height * this.fruitStyle.width / 480) / 2), 
-        			(this.y - (height * this.fruitStyle.height / 480) / 2), 
-        			height * this.fruitStyle.width / 480, 
-        			height * this.fruitStyle.height / 480);
 			}
 		} else {
 			if (this.initDelay) {
@@ -350,13 +408,13 @@ window.onload = function() {
 			ctx.fillText('Game Over', width / 2, height / 2);
 			ctx.fillText('总分: ' + score, width / 2, height / 2 -30);
 		} else {
-			//绘制忍者刀
+			/*//绘制忍者刀
 			if (ninjaKnife.isDown) {
 				document.title = ninjaKnife.x + ' ' + ninjaKnife.y;
 				ctx.fillStyle = '#fff';
 				ctx.arc(ninjaKnife.x, ninjaKnife.y, 4, 0, Math.PI * 2, false);
 				ctx.fill();
-			}
+			}*/
 			//绘制分数图标
 			ctx.drawImage(scoreIcog, height * 10 / 480, height * 10 / 480, 
 				height * scoreIcog.width / 480, height * scoreIcog.height / 480);
@@ -436,7 +494,7 @@ window.onload = function() {
 			}
 		}, t);
 	}
-	
+	document.querySelector('.start').play();
 	main();
 }
 
