@@ -200,6 +200,24 @@ window.onload = function() {
     	document.addEventListener('mouseup', function(e) {
     		that.isDown = false;
     	}, false);
+
+    	//移动端
+    	document.addEventListener('touchstart', function(e) {
+    		that.isDown = true;
+    		return false;
+    	}, false);
+
+    	document.addEventListener('touchmove', function(e) {
+    		that.x = e.x - canvas.offsetLeft || e.pageX - canvas.offsetLeft;
+    		that.y = e.y - canvas.offsetTop || e.pageY - canvas.offsetTop;
+    		if (that.isDown && that.y < height) {
+    			that.isCut(fruit);
+    		}
+    	});
+
+    	document.addEventListener('touchend', function(e) {
+    		that.isDown = false;
+    	}, false);
     }
 
     //创建一把忍者刀
