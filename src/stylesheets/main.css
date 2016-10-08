@@ -1,5 +1,9 @@
+body {
+	height: 100%;
+	overflow: hidden;
+}
 #canvas {
 	display: block;
 	background: #000;
-	margin: auto;
+	margin: 0 auto;
 }
