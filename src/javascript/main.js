@@ -1,8 +1,14 @@
 window.onload = function() {
 	var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
-	canvas.width = 640;
-	canvas.height = 480;
+	if (window.innerHeight > 640) {
+		canvas.width = 320;
+		canvas.height = 240;
+	} else {
+		canvas.width = window.innerHeight * 320 / 240;
+		canvas.height = window.innerHeight;
+	}
+	
 
 	var width = canvas.width;
 	var height = canvas.height;
@@ -22,7 +28,6 @@ window.onload = function() {
 		}
 		img.src = src;
 		return img;
-
 	}
 
 	//图片全部下载完成的标志
@@ -40,6 +45,14 @@ window.onload = function() {
 			&& heart1.isReady && heart2.isReady && heart3.isReady 
 			&& heart1f.isReady && heart2f.isReady && heart3f.isReady 
 			&& flash.isReady) {
+			//设置图像尺寸
+			/*var newArr = [];
+			newArr.push.apply(newArr, arr);
+			newArr.push(bgImg, scoreIcog, heart1, heart2, heart3, heart1f, heart2f, heart3f, flash);
+			newArr.forEach(function(e) {
+				e.style.width = height * e.width / 480 + 'px';
+				e.style.height = height * e.height / 480 + 'px';
+			});*/
 			isDownloadState = true;
 			return result
 		}
@@ -86,11 +99,11 @@ window.onload = function() {
     }
 
     //速度控制
-    var speedX = [90, 180];
-    var speedY = [350, 500];
+    var speedX = [width * 90 / 640, width * 180 / 640];
+    var speedY = [width * 350 / 640, width * 500 / 640];
 
 	//仿重力加速度
-	var g = -400;
+	var g = -(height * 400 / 480);
 
 	//运动单位时间：5ms
 	var t = 5;
@@ -199,7 +212,7 @@ window.onload = function() {
 		this.x = random(0, width);
 		this.y = height;
 		//半径
-		this.r = 25;
+		this.r = height * 25 / 480;
 		//初速度，以秒为时间单位，以px为位移单位
 		this.speedX = random.apply(null, speedX);
 		this.speedY = random.apply(null, speedY);
@@ -279,14 +292,22 @@ window.onload = function() {
 				}
 				this.x += this.speedX * t / 1000;
 				//绘制图像
-        		ctx.drawImage(this.fruitStyle, (this.x - this.fruitStyle.width / 2), (this.y - this.fruitStyle.height / 2));
+        		ctx.drawImage(this.fruitStyle, 
+        			(this.x - (height * this.fruitStyle.width / 480) / 2), 
+        			(this.y - (height * this.fruitStyle.height / 480) / 2), 
+        			height * this.fruitStyle.width / 480, 
+        			height * this.fruitStyle.height / 480);
 			}
 		} else {
 			if (this.initDelay) {
 				this.initDelay--;
 			} else {
 				//绘制图像
-	        	ctx.drawImage(this.fruitStyle, (this.x - this.fruitStyle.width / 2), (this.y - this.fruitStyle.height / 2));
+	        	ctx.drawImage(this.fruitStyle, 
+	        		(this.x - (height * this.fruitStyle.width / 480) / 2), 
+	        		(this.y - (height * this.fruitStyle.height / 480) / 2),
+	        		height * this.fruitStyle.width / 480, 
+	        		height * this.fruitStyle.height / 480);
 	        	this.isBegin = true;
 			}	
 		}
@@ -300,7 +321,7 @@ window.onload = function() {
 	function render() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		//绘制背景
-		ctx.drawImage(bgImg, 0, 0);
+		ctx.drawImage(bgImg, 0, 0, height * bgImg.width / 480, height * bgImg.height / 480);
 		//判断生命是否为0，0则游戏结束，否则游戏继续
 		if (heart === 0) {
 			//游戏结束
@@ -319,28 +340,38 @@ window.onload = function() {
 				ctx.fill();
 			}
 			//绘制分数图标
-			ctx.drawImage(scoreIcog, 10, 10);
+			ctx.drawImage(scoreIcog, height * 10 / 480, height * 10 / 480, 
+				height * scoreIcog.width / 480, height * scoreIcog.height / 480);
 
 			//绘制分数
 			ctx.fillStyle = '#f9fe73';
 			ctx.font = '26px Arial';
 			ctx.textAlign = 'start';
 			ctx.textBaseline = 'top';
-			ctx.fillText(score, 50, 12);
+			ctx.fillText(score, height * 50 / 480, height * 12 / 480);
 
 			//绘制生命值
 			if (heart === 3) {
-				ctx.drawImage(heart1, width-125, 10);
-				ctx.drawImage(heart2, width-90, 10);
-				ctx.drawImage(heart3, width-50, 10);
+				ctx.drawImage(heart1, width-(width * 125 / 640), width * 10 / 640, 
+					height * heart1.width / 480, height * heart1.height / 480);
+				ctx.drawImage(heart2, width-(width * 90 / 640), width * 10 / 640,
+					height * heart2.width / 480, height * heart2.height / 480);
+				ctx.drawImage(heart3, width-(width * 50 / 640), width * 10 / 640,
+					height * heart3.width / 480, height * heart3.height / 480);
 			} else if (heart === 2) {
-				ctx.drawImage(heart1f, width-125, 10);
-				ctx.drawImage(heart2, width-90, 10);
-				ctx.drawImage(heart3, width-50, 10);
+				ctx.drawImage(heart1f, width-(width * 125 / 640), width * 10 / 640,
+					height * heart1f.width / 480, height * heart1f.height / 480);
+				ctx.drawImage(heart2, width-(width * 90 / 640), width * 10 / 640,
+					height * heart2.width / 480, height * heart2.height / 480);
+				ctx.drawImage(heart3, width-(width * 50 / 640), width * 10 / 640,
+					height * heart3.width / 480, height * heart3.height / 480);
 			} else if (heart === 1) {
-				ctx.drawImage(heart1f, width-125, 10);
-				ctx.drawImage(heart2f, width-90, 10);
-				ctx.drawImage(heart3, width-50, 10);
+				ctx.drawImage(heart1f, width-(width * 125 / 640), width * 10 / 640,
+					height * heart1f.width / 480, height * heart1f.height / 480);
+				ctx.drawImage(heart2f, width-(width * 90 / 640), width * 10 / 640,
+					height * heart2f.width / 480, height * heart2f.height / 480);
+				ctx.drawImage(heart3, width-(width * 50 / 640), width * 10 / 640,
+					height * heart3.width / 480, height * heart3.height / 480);
 			}
 			
 			//绘制击中特效
@@ -355,7 +386,11 @@ window.onload = function() {
 				ctx.save();//保存状态
 				ctx.translate(hitState.x, hitState.y);//设置画布上的(0,0)位置，也就是旋转的中心点
 				ctx.rotate(hitState.rotate);
-				ctx.drawImage(flash, 0 - flash.width / 2, 0 - flash.height / 2);//把图片绘制在旋转的中心点，
+				ctx.drawImage(flash, 
+					0 - (height * flash.width / 480) / 2, 
+					0 - (height * flash.height / 480) / 2, 
+					height * flash.width / 480, 
+					height * flash.height / 480);//把图片绘制在旋转的中心点，
 				ctx.restore();//恢复状态
 				
 				hitState.time--;
