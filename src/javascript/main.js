@@ -90,13 +90,13 @@ window.onload = function() {
 		y: 0
 	}
 
-	//当前生命值
-	var heart = 3;
-
 	//随机数
     function random(min, max) {
         return Math.floor(Math.random() * (max - min) + min)
     }
+
+    //当前生命值
+	var heart = 3;
 
     //速度控制
     var speedX = [width * 90 / 640, width * 180 / 640];
